@@ -523,7 +523,7 @@ exports.connect = function(config, intern, callback) {
 
   var mongoString;
   
-  if (config.useSrvRecord !== undefined && useSrvRecord) {
+  if (config.useSrvRecord !== undefined && config.useSrvRecord) {
     mongoString = 'mongodb+srv://';
   } else {
     mongoString = 'mongodb://';
