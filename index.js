@@ -523,7 +523,7 @@ exports.connect = function(config, intern, callback) {
 
   var mongoString;
   
-  if (config.useSrvRecord) {
+  if (config.useSrvRecord !== undefined) {
     mongoString = 'mongodb+srv://';
   } else {
     mongoString = 'mongodb://';
@@ -556,8 +556,7 @@ exports.connect = function(config, intern, callback) {
       mongoString += '?' + extraParams.join('&');
   }
 
-  console.log("Using the following mongo url to connect to database: " + useSrvRecord);
-  db = config.db || ((config.useSrvRecord) ? new MongoClient(mongoString, { useNewUrlParser: true }) : new MongoClient(new Server(host, port)));
+  db = config.db || ((config.useSrvRecord !== undefined) ? new MongoClient(mongoString, { useNewUrlParser: true }) : new MongoClient(new Server(host, port)));
 
 
   callback(null, new MongodbDriver(db, intern, mongoString));
