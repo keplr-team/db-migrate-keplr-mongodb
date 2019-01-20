@@ -521,7 +521,13 @@ exports.connect = function(config, intern, callback) {
     host = config.host + ':' + port;
   }
 
-  var mongoString = 'mongodb://';
+  var mongoString;
+  
+  if (config.useSrvRecord) {
+    mongoString = 'mongodb+srv://';
+  } else {
+    mongoString = 'mongodb://';
+  }
 
   if(config.user !== undefined && config.password !== undefined) {
     // Ensure user and password can contain special characters like "@" so app doesn't throw an exception when connecting to MongoDB
@@ -550,7 +556,9 @@ exports.connect = function(config, intern, callback) {
       mongoString += '?' + extraParams.join('&');
   }
 
+  console.log("Using the following mongo url to connect to database: " + useSrvRecord);
+  db = config.db || ((config.useSrvRecord) ? new MongoClient(mongoString, { useNewUrlParser: true }) : new MongoClient(new Server(host, port)));
 
-  db = config.db || new MongoClient(new Server(host, port));
+
   callback(null, new MongodbDriver(db, intern, mongoString));
 };

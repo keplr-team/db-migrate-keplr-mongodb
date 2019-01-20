@@ -1,7 +1,7 @@
 {
-  "name": "db-migrate-mongodb",
+  "name": "@nesto-software/db-migrate-mongodb",
   "version": "1.5.0",
-  "description": "mongodb driver for db-migrate",
+  "description": "Mongodb driver for db-migrate. This is a fork which updated the mongo dependencies in order to support replica sets with srv records.",
   "main": "index.js",
   "scripts": {
     "test": "node node_modules/.bin/vows"
