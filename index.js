@@ -556,7 +556,7 @@ exports.connect = function(config, intern, callback) {
       mongoString += '?' + extraParams.join('&');
   }
 
-  db = config.db || ((config.useSrvRecord !== undefined && useSrvRecord) ? new MongoClient(mongoString, { useNewUrlParser: true }) : new MongoClient(new Server(host, port)));
+  db = config.db || ((config.useSrvRecord !== undefined && config.useSrvRecord) ? new MongoClient(mongoString, { useNewUrlParser: true }) : new MongoClient(new Server(host, port)));
 
 
   callback(null, new MongodbDriver(db, intern, mongoString));
