@@ -517,8 +517,15 @@ exports.connect = function(config, intern, callback) {
     else
       host = parseObjects(config, port, length);
   } else {
+    if(config.port === undefined 
+        && config.useSrvRecord !== undefined 
+        && String(config.useSrvRecord) == 'true') {
 
-    host = config.host + ':' + port;
+      // port must not be set if protocol is mongo+srv
+      host = config.host;
+    } else {
+      host = config.host + ':' + port;
+    }
   }
 
   var mongoString;
