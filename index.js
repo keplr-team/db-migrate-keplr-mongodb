@@ -1,17 +1,16 @@
 var util = require('util');
-var MongoClient = require('mongodb').MongoClient;
-var Server = require('mongodb').Server;
+var mongo = require('mongodb')
 var Base = require('db-migrate-base');
 var Promise = require('bluebird');
 var log;
-var type;
 
 var MongodbDriver = Base.extend({
 
+  // note: the connection variable is deprecated and shall no longer be used
   init: function(connection, internals, mongoString) {
     this._super(internals);
-    this.connection = connection;
     this.connectionString = mongoString;
+    this.defaultDatabase = internals.defaultDatabase;
   },
 
   /**
@@ -289,8 +288,12 @@ var MongodbDriver = Base.extend({
         return (err ? reject(err) : resolve(data));
       };
 
+      const defaultDatabase = this.defaultDatabase;
+
       // Get a connection to mongo
-      this.connection.connect(this.connectionString, function(err, db) {
+      mongo.connect(this.connectionString, {
+        useNewUrlParser: true,
+      }, function(err, conn) {
 
         if(err) {
           prCB(err);
@@ -304,8 +307,10 @@ var MongodbDriver = Base.extend({
           }
 
           prCB(null, data);
-          db.close();
+          conn.close();
         };
+
+       const db = conn.db(defaultDatabase);
 
         // Depending on the command, we need to use different mongo methods
         switch(command) {
@@ -357,7 +362,7 @@ var MongodbDriver = Base.extend({
             db.collection(collection)[command](options.query, options.update, options.options, callbackFunction);
             break;
           case 'getDbInstance':
-            prCB(null, db); // When the user wants to get the DB instance we need to return the promise callback, so the DB connection is not automatically closed
+            prCB(null, conn); // When the user wants to get the DB instance we need to return the promise callback, so the DB connection is not automatically closed
             break;
           default:
             db[command](collection, callbackFunction);
@@ -383,8 +388,7 @@ var MongodbDriver = Base.extend({
    * Runs a NoSQL command regardless of the dry-run param
    */
   _all: function() {
-    var args = this._makeParamArgs(arguments);
-    return this.connection.query.apply(this.connection, args);
+    throw new Error("The _all method is no longer supported.");
   },
 
   /**
@@ -489,12 +493,14 @@ exports.connect = function(config, intern, callback) {
   var internals = intern;
 
   log = internals.mod.log;
-  type = internals.mod.type;
 
   // Make sure the database is defined
   if(config.database === undefined) {
     throw new Error('database must be defined in database.json');
   }
+
+  // set the default database on the intern object
+  intern.defaultDatabase = config.database;
 
   if(config.port === undefined) {
     port = 27017;
@@ -563,8 +569,5 @@ exports.connect = function(config, intern, callback) {
       mongoString += '?' + extraParams.join('&');
   }
 
-  db = config.db || ((config.useSrvRecord !== undefined && String(config.useSrvRecord) == 'true') ? new MongoClient(mongoString, { useNewUrlParser: true }) : new MongoClient(new Server(host, port)));
-
-
-  callback(null, new MongodbDriver(db, intern, mongoString));
+  callback(null, new MongodbDriver(undefined, intern, mongoString));
 };

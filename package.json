@@ -1,6 +1,6 @@
 {
   "name": "db-migrate-mongodb-nesto-fork",
-  "version": "1.6.2",
+  "version": "2.0.0",
   "description": "Mongodb driver for db-migrate. This is a fork which updated the mongo dependencies in order to support replica sets with srv records.",
   "main": "index.js",
   "scripts": {
@@ -27,11 +27,11 @@
   "dependencies": {
     "bluebird": "^3.5.3",
     "db-migrate-base": "^1.5.3",
-    "mongodb": "^2.2.36"
+    "mongodb": "^3.1"
   },
   "devDependencies": {
     "db-meta": "^0.4.1",
     "db-migrate-shared": "^1.1.2",
-    "vows": "0.8.0"
+    "vows": "0.8.2"
   }
 }

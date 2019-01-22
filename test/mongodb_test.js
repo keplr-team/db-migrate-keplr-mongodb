@@ -474,7 +474,8 @@ vows
         db.getDbInstance(this.callback);
       },
 
-      teardown: function() {
+      teardown: function(conn) {
+        conn.close();
       },
 
       "has database reference": function(err, db) {
