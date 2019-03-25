@@ -296,6 +296,7 @@ var MongodbDriver = Base.extend({
       }, function(err, conn) {
 
         if(err) {
+          console.error(err);
           prCB(err);
         }
 
