@@ -296,8 +296,7 @@ var MongodbDriver = Base.extend({
       }, function(err, conn) {
 
         if(err) {
-          console.error(err);
-          prCB(err);
+          return prCB(err);
         }
 
         // Callback function to return mongo records
