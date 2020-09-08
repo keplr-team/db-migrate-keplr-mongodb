@@ -19,7 +19,7 @@ var MongodbDriver = Base.extend({
    * @param callback
    */
   _createMigrationsCollection: function(callback) {
-    return this._run('createCollection', this.internals.migrationTable, null)
+    return this._run('createCollection', this.internals.migrationTable, { strict: false })
       .nodeify(callback);
   },
 
@@ -365,7 +365,7 @@ var MongodbDriver = Base.extend({
             prCB(null, conn); // When the user wants to get the DB instance we need to return the promise callback, so the DB connection is not automatically closed
             break;
           default:
-            db[command](collection, callbackFunction);
+            db[command](collection, callbackFunction, options);
             break;
         }
       });
