@@ -19,8 +19,17 @@ var MongodbDriver = Base.extend({
    * @param callback
    */
   _createMigrationsCollection: function(callback) {
-    return this._run('createCollection', this.internals.migrationTable, { strict: false })
-      .nodeify(callback);
+    return this._getCollectionNames((error, collectionNames) => { 
+      if(error) {
+        callback(error)
+      }
+      if(!collectionNames.map(c => c.collectionName).includes(this.internals.migrationTable)) {
+        this._run('createCollection', this.internals.migrationTable)
+        .nodeify(callback); 
+      } else {
+        callback()
+      }
+    });
   },
 
 
